@@ -34,7 +34,11 @@ const state = {
     }
 };
 
-const getters = {};
+const getters = {
+    lastTab: state => {
+        return state.tabs.slice(-1)[0].listName;
+    }
+};
 
 const mutations = {
     init(state, {tabs, lists}) {
