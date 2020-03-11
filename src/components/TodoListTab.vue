@@ -7,9 +7,9 @@
         <div v-for="tab in tabs"
              :key="tab.id"
              :listName="tab.listName"
-             :class="{active: tab.listName === currentTab}"
+             :class="{active: tab.listName === $route.params.tab}"
         >
-            <span @click="$emit('change', tab.listName)"
+            <span @click="switchTo(tab.listName)"
                   @dblclick="upd(tab.listName, tab.name)"
             >
                 {{ tab.name }}
@@ -34,7 +34,6 @@
                 newTabName: ''
             }
         },
-        props: ['currentTab'],
         components: {BaseInputText},
         computed: {
             ...mapState({
@@ -48,6 +47,7 @@
                     this.$store.commit('addTab', {name});
                     this.newTabName = ''
                 }
+                this.$router.push({path: `/${this.$store.getters.lastTab}`})
             },
             upd(listName, name) {
                 let newName = window.prompt('请输入tab: ' + name + ' 的新名称').trim();
@@ -59,13 +59,16 @@
                 if (window.confirm('是否要删除tab: "' + name + '" 以及下属条目')) {
                     this.$store.commit('deleteTab', {listName});
                 }
+            },
+            switchTo(listName) {
+                this.$router.push({path: `/${listName}`});
             }
         },
     }
 </script>
 
 <style scoped>
-    .active{
+    .active {
         background: lightsteelblue;
     }
 </style>
