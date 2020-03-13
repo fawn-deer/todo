@@ -37,6 +37,14 @@ const state = {
 const getters = {
     lastTab: state => {
         return state.tabs.slice(-1)[0].listName;
+    },
+    tabs: state => {
+        return state.tabs
+    },
+    getTab: state => listName => {
+        return state.tabs.filter(tab => {
+                return tab.listName === listName
+            })
     }
 };
 
@@ -87,7 +95,7 @@ const mutations = {
         let list = lists[listName];
 
         let id = list.nextId++;
-        list.todo.unshift({
+        list.todo.push({
             id,
             done: false,
             text
@@ -106,12 +114,12 @@ const mutations = {
         lists[listName] = list;
         state.lists = lists;
     },
-    setTodoDone(state, {listName, id}) {
+    changeTodoState(state, {listName, id}) {
         let lists = state.lists;
         let list = lists[listName];
 
         let index = list.todo.findIndex(todo => todo.id === id);
-        list.todo[index].done = true;
+        list.todo[index].done = !list.todo[index].done;
 
         lists[listName] = list;
         state.lists = lists;

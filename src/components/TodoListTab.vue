@@ -1,40 +1,41 @@
 <template>
     <div>
-        <BaseInputText placeholder="请输入新建 tab 名称"
-                       v-model="newTabName"
-                       @keydown.enter="add"
+        <q-input type="text"
+                 clearable
+                 clear-icon="close"
+                 v-model="newTabName"
+                 label="新建选项卡名称"
+                 @keydown.enter="add"
+                 class="new-tab-input"
         />
-        <div v-for="tab in tabs"
-             :key="tab.id"
-             :listName="tab.listName"
-             :class="{active: tab.listName === $route.params.tab}"
+        <q-tabs vertical
+                no-caps
+                active-color="blue-3"
+                active-bg-color="blue-grey-13"
+                indicator-color="deep-orange-13"
         >
-            <span @click="switchTo(tab.listName)"
-                  @dblclick="upd(tab.listName, tab.name)"
+            <q-route-tab v-for="tab in tabs"
+                         :key="tab.id"
+                         :to="`/${tab.listName}`"
+                         @dblclick="upd(tab.listName, tab.name)"
             >
                 {{ tab.name }}
-            </span>
-            <button v-if="tabs.length > 1"
-                    @click="del(tab.listName, tab.name)"
-            >
-                X
-            </button>
-        </div>
+            </q-route-tab>
+        </q-tabs>
     </div>
 </template>
 
 <script>
     import {mapState} from "vuex";
-    import BaseInputText from "@/components/BaseInputText";
 
     export default {
         name: "TodoListTab",
         data: function () {
             return {
-                newTabName: ''
+                newTabName: '',
+                splitterModel: 100
             }
         },
-        components: {BaseInputText},
         computed: {
             ...mapState({
                 tabs: state => state.todo.tabs
@@ -48,27 +49,13 @@
                     this.newTabName = ''
                 }
                 this.$router.push({path: `/${this.$store.getters.lastTab}`})
-            },
-            upd(listName, name) {
-                let newName = window.prompt('请输入tab: ' + name + ' 的新名称').trim();
-                if (newName.length > 0) {
-                    this.$store.commit('updateTabName', {listName, newName});
-                }
-            },
-            del(listName, name) {
-                if (window.confirm('是否要删除tab: "' + name + '" 以及下属条目')) {
-                    this.$store.commit('deleteTab', {listName});
-                }
-            },
-            switchTo(listName) {
-                this.$router.push({path: `/${listName}`});
             }
         },
     }
 </script>
 
 <style scoped>
-    .active {
-        background: lightsteelblue;
+    .new-tab-input {
+        font-size: 20px;
     }
 </style>

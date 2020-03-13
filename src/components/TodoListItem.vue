@@ -1,13 +1,19 @@
 <template>
-    <li>
-        <input v-if="!item.done"
-               type="checkbox"
-               :checked="item.done"
-               @change="setTodoDone({listName: tab(), id: item.id})"
+    <q-item tag="label">
+        <q-item-section side top>
+            <q-checkbox :value="item.done"
+                        @input="changeTodoState({listName: tab(), id: item.id})"
+            />
+        </q-item-section>
+        <q-item-section>
+            <q-item-label>{{ item.text }}</q-item-label>
+        </q-item-section>
+        <q-btn round
+               color="red"
+               icon="clear"
+               @click="deleteTodo({listName: tab(), id: item.id})"
         />
-        {{ item.text }}
-        <button @click="deleteTodo({listName: tab(), id: item.id})">X</button>
-    </li>
+    </q-item>
 </template>
 
 <script>
@@ -19,7 +25,7 @@
         methods: {
             ...mapMutations([
                 'deleteTodo',
-                'setTodoDone'
+                'changeTodoState'
             ]),
             tab() {
                 return this.$route.params.tab;

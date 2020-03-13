@@ -1,35 +1,44 @@
 <template>
-    <div>
+    <div class="container">
         <div v-if="haveTab">
-            <BaseInputText placeholder="请输入新的待办事项"
-                           v-model="newTodoText"
-                           @keydown.enter="add"
+            <q-input type="text"
+                     clearable
+                     clear-icon="close"
+                     v-model="newTodoText"
+                     label="新的待办事项"
+                     @keydown.enter="add"
+                     class="new-todo-input"
             />
-            <select v-model="filterDone">
-                <option v-for="option in options"
-                        :key="option.value"
-                        :value="option.value"
-                >
-                    {{option.text}}
-                </option>
-            </select>
-            <ul>
-                <TodoListItem v-for="item in lists"
-                              :key="item.id"
-                              :item="item"
-                />
-            </ul>
+            <q-select v-model="filterDone"
+                      :options="options"
+                      :display-value="`${filterDone.text}`"
+                      class="select-todo"
+            >
+                <template v-slot:option="scope">
+                    <q-item v-on="scope.itemEvents"
+                            v-bind="scope.itemProps"
+                    >
+                        <q-item-label v-html="scope.opt.text"/>
+                    </q-item>
+                </template>
+            </q-select>
         </div>
+        <q-list>
+            <TodoListItem v-for="item in lists"
+                          :key="item.id"
+                          :item="item"
+            />
+        </q-list>
+
     </div>
 </template>
 
 <script>
-    import BaseInputText from "@/components/BaseInputText";
     import TodoListItem from "@/components/TodoListItem";
 
     export default {
         name: "TodoList",
-        components: {TodoListItem, BaseInputText},
+        components: {TodoListItem},
         props: ['tab'],
         data: function () {
             return {
@@ -47,13 +56,16 @@
                 return this.tab in this.$store.state.todo.lists;
             },
             lists() {
-                const currentTabLists = this.$store.state.todo.lists[this.tab].todo;
-                if (this.filterDone === 'all') {
-                    return currentTabLists;
+                if (this.haveTab) {
+                    const currentTabLists = this.$store.state.todo.lists[this.tab].todo;
+                    if (this.filterDone.value === 'all') {
+                        return currentTabLists;
+                    }
+                    return currentTabLists.filter(todo => {
+                        return todo.done === this.filterDone.value
+                    })
                 }
-                return currentTabLists.filter(todo => {
-                    return todo.done === this.filterDone
-                })
+                return []
             }
         },
         methods: {
@@ -65,17 +77,31 @@
                         text
                     });
                     this.newTodoText = '';
-                    this.filterDone = false
+                    this.filterDone = {text: '未完成', value: false}
                 }
             },
         },
         created: function () {
             // 触发计算lists
-            this.filterDone = false;
+            this.filterDone = {text: '未完成', value: false};
         }
     }
 </script>
 
 <style scoped>
+    .new-todo-input {
+        font-size: 20px;
+        width: 80%;
+        float: left;
+    }
 
+    .select-todo {
+        width: 20%;
+        float: left;
+    }
+
+    .container {
+        width: 80%;
+        margin: 10px auto;
+    }
 </style>
