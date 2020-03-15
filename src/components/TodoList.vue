@@ -29,7 +29,6 @@
                           :item="item"
             />
         </q-list>
-
     </div>
 </template>
 

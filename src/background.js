@@ -18,9 +18,12 @@ protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: {secure: true,
 function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
-        width: 800, height: 600, webPreferences: {
+        width: 800,
+        height: 600,
+        webPreferences: {
             nodeIntegration: true
-        }
+        },
+        frame: false
     });
 
     if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -28,7 +31,7 @@ function createWindow() {
         win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
         if (!process.env.IS_TEST) win.webContents.openDevTools()
     } else {
-        createProtocol('app')
+        createProtocol('app');
         // Load the index.html when not in development
         win.loadURL('app://./index.html')
     }
@@ -71,6 +74,15 @@ app.on('ready', async () => {
         // } catch (e) {
         //   console.error('Vue Devtools failed to install:', e.toString())
         // }
+
+        // 需要加载vueDevTools时请更改扩展路径
+        const path = require('path');
+        const os = require('os');
+
+        BrowserWindow.addDevToolsExtension(
+            path.join(os.homedir(),
+                '\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Extensions\\nhdogjmejiglipccpnnnanhbledajbpd\\5.3.3_0')
+        );
 
     }
     createWindow()

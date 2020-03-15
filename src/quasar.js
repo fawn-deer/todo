@@ -36,6 +36,9 @@ import {
     QSplitter,
     QPopupEdit,
     QTooltip,
+    QBar,
+    QSpace,
+    QScrollArea,
 } from 'quasar'
 
 Vue.use(Quasar, {
@@ -63,6 +66,9 @@ Vue.use(Quasar, {
         QSplitter,
         QPopupEdit,
         QTooltip,
+        QBar,
+        QSpace,
+        QScrollArea,
     },
     directives: {},
     plugins: {},
