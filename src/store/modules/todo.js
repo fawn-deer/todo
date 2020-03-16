@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 let nextTabId = 1;
 const state = {
     tabs: [
@@ -43,8 +45,8 @@ const getters = {
     },
     getTab: state => listName => {
         return state.tabs.filter(tab => {
-                return tab.listName === listName
-            })
+            return tab.listName === listName
+        })
     }
 };
 
@@ -57,22 +59,20 @@ const mutations = {
         })) + 1;
     },
     addTab(state, {name}) {
-        let id = nextTabId++;
-        let listName = 'tab-' + id;
+        const id = nextTabId++;
+        const listName = 'tab-' + id;
         state.tabs.push({
             id,
             name,
             listName
         });
-
-        let lists = state.lists;
-        lists[listName] = {
+        Vue.set(state.lists, listName, {
             filter: 'undone',
             nextId: 0,
             todo: []
-        };
-        state.lists = lists;
+        });
     },
+    // TODO 更改为响应式更新数据
     deleteTab(state, {listName}) {
         let lists = state.lists;
 
@@ -85,44 +85,33 @@ const mutations = {
         }
     },
     updateTabName(state, {listName, newName}) {
-        let tabs = state.tabs;
-        let index = tabs.findIndex(tab => tab.listName === listName);
-        tabs[index].name = newName;
-        state.tabs = tabs;
+        const index = state.tabs.findIndex(tab => tab.listName === listName);
+        Vue.set(state.tabs, index, {
+            id: state.tabs[index].id,
+            name: newName,
+            listName: state.tabs[index].listName
+        })
     },
     addTodo(state, {listName, text}) {
-        let lists = state.lists;
-        let list = lists[listName];
-
-        let id = list.nextId++;
-        list.todo.push({
+        const id = state.lists[listName].nextId++;
+        state.lists[listName].todo.unshift({
             id,
             done: false,
             text
         });
-
-        lists[listName] = list;
-        state.lists = lists;
     },
     deleteTodo(state, {listName, id}) {
-        let lists = state.lists;
-        let list = lists[listName];
-
-        list.todo = list.todo.filter((todo) => {
+        state.lists[listName].todo = state.lists[listName].todo.filter((todo) => {
             return todo.id !== id;
         });
-        lists[listName] = list;
-        state.lists = lists;
     },
     changeTodoState(state, {listName, id}) {
-        let lists = state.lists;
-        let list = lists[listName];
-
-        let index = list.todo.findIndex(todo => todo.id === id);
-        list.todo[index].done = !list.todo[index].done;
-
-        lists[listName] = list;
-        state.lists = lists;
+        const index = state.lists[listName].todo.findIndex(todo => todo.id === id);
+        Vue.set(state.lists[listName].todo, index, {
+            id: state.lists[listName].todo[index].id,
+            done: !state.lists[listName].todo[index].done,
+            text: state.lists[listName].todo[index].text
+        })
     }
 };
 
