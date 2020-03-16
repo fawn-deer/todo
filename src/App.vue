@@ -68,7 +68,7 @@
                     newName = newName.trim();
                     if (newName.length > 0) {
                         const listName = this.$route.params.tab;
-                        this.$store.commit('updateTabName', {listName, newName});
+                        this.$store.dispatch('updateTabNameAction', {listName, newName});
                     }
                 }
             }
@@ -82,14 +82,14 @@
             },
             minimize() {
                 if (this.isElectron) {
-                    const { remote } = require('electron');
+                    const {remote} = require('electron');
                     remote.BrowserWindow.getFocusedWindow().minimize();
                 }
             },
 
             maximize() {
                 if (this.isElectron) {
-                    const { remote } = require('electron');
+                    const {remote} = require('electron');
                     const win = remote.BrowserWindow.getFocusedWindow();
                     win.isMaximized()
                         ? win.unmaximize()
@@ -99,9 +99,14 @@
 
             closeApp() {
                 if (this.isElectron) {
-                    const { remote } = require('electron');
+                    const {remote} = require('electron');
                     remote.BrowserWindow.getFocusedWindow().close();
                 }
+            }
+        },
+        created: function () {
+            if (process.env.IS_ELECTRON) {
+                this.$store.dispatch('initStoreAction');
             }
         }
     }

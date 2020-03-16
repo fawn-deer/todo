@@ -71,7 +71,7 @@
             add() {
                 let text = this.newTodoText.trim();
                 if (text.length > 0) {
-                    this.$store.commit('addTodo', {
+                    this.$store.dispatch('addTodoAction', {
                         listName: this.tab,
                         text
                     });

@@ -1,4 +1,5 @@
 import Vue from "vue";
+import localStore from "../localStore";
 
 let nextTabId = 1;
 const state = {
@@ -12,29 +13,19 @@ const state = {
     lists: {
         'tab-0': {
             filter: 'undone',
-            nextId: 5,
-            todo: [
-                {
-                    id: 0,
-                    done: false,
-                    text: '1sdf'
-                }, {
-                    id: 2,
-                    done: false,
-                    text: 'sdf'
-                }, {
-                    id: 3,
-                    done: false,
-                    text: '1aesr'
-                }, {
-                    id: 4,
-                    done: false,
-                    text: 'vcxcv'
-                },
-            ]
+            nextId: 0,
+            todo: []
         },
     }
 };
+async function setLocalStore(type, payload) {
+    if (process.env.IS_ELECTRON){
+        if (type === 'all') {
+            localStore.store = payload;
+        }
+        localStore.set(type, payload);
+    }
+}
 
 const getters = {
     lastTab: state => {
@@ -52,8 +43,8 @@ const getters = {
 
 const mutations = {
     init(state, {tabs, lists}) {
-        state.tabs = tabs;
-        state.lists = lists;
+        Vue.set(state, 'tabs', tabs);
+        Vue.set(state, 'lists', lists);
         nextTabId = Math.max.apply(null, Array.from(tabs, (tab) => {
             return tab.id
         })) + 1;
@@ -115,9 +106,45 @@ const mutations = {
     }
 };
 
+const actions = {
+    initStoreAction(context) {
+        const {tabs, lists} = localStore.store;
+        context.commit('init', {
+            tabs,
+            lists
+        })
+    },
+    addTabAction(context, name) {
+        context.commit('addTab', name);
+        setLocalStore('all', context.state);
+    },
+    deleteTabAction(context, {listName}) {
+        context.commit('deleteTab', {listName});
+        setLocalStore('all', context.state);
+    },
+    updateTabNameAction(context, {listName, newName}) {
+        context.commit('updateTabName', {listName, newName});
+        setLocalStore('tabs', context.state.tabs);
+    },
+    addTodoAction(context, {listName, text}) {
+        context.commit('addTodo', {listName, text});
+        setLocalStore('lists', context.state.lists);
+    },
+    deleteTodoAction(context, {listName, id}) {
+        context.commit('deleteTodo', {listName, id});
+        setLocalStore('lists', context.state.lists);
+    },
+    changeTodoStateAction(context, {listName, id}) {
+        context.commit('changeTodoState', {listName, id});
+        setLocalStore('lists', context.state.lists);
+    }
+
+};
+
 export default {
     namespace: true,
     state,
     getters,
-    mutations
+    mutations,
+    actions
 }

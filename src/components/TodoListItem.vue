@@ -2,7 +2,7 @@
     <q-item tag="label">
         <q-item-section side top>
             <q-checkbox :value="item.done"
-                        @input="changeTodoState({listName: tab(), id: item.id})"
+                        @input="changeTodoStateAction({listName: tab(), id: item.id})"
             />
         </q-item-section>
         <q-item-section>
@@ -11,21 +11,21 @@
         <q-btn round
                color="red"
                icon="clear"
-               @click="deleteTodo({listName: tab(), id: item.id})"
+               @click="deleteTodoAction({listName: tab(), id: item.id})"
         />
     </q-item>
 </template>
 
 <script>
-    import {mapMutations} from "vuex";
+    import {mapActions} from "vuex";
 
     export default {
         name: "TodoListItem",
         props: ['item'],
         methods: {
-            ...mapMutations([
-                'deleteTodo',
-                'changeTodoState'
+            ...mapActions([
+                'deleteTodoAction',
+                'changeTodoStateAction'
             ]),
             tab() {
                 return this.$route.params.tab;

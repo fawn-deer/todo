@@ -17,7 +17,6 @@
             <q-route-tab v-for="tab in tabs"
                          :key="tab.id"
                          :to="`/${tab.listName}`"
-                         @dblclick="upd(tab.listName, tab.name)"
             >
                 {{ tab.name }}
             </q-route-tab>
@@ -45,7 +44,7 @@
             add() {
                 let name = this.newTabName.trim();
                 if (name.length > 0) {
-                    this.$store.commit('addTab', {name});
+                    this.$store.dispatch('addTabAction', {name});
                     this.newTabName = ''
                 }
                 this.$router.push({path: `/${this.$store.getters.lastTab}`})
