@@ -1,24 +1,16 @@
 # todo
+vue+electron入门小项目，如需web端，请自行fork修改
 
-## Project setup
-```
-npm install
-```
+# 构建
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 开发
+`npm run electron:serve`
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 打包
+`npm run electron:build`
 
-### Lints and fixes files
-```
-npm run lint
-```
+## 其余指令
+详见`package.json`
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+# License
+MIT
